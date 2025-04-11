@@ -27,6 +27,9 @@ This tool analyzes the impact of currency exchange rates on Indian IT companies'
 It helps investors and analysts understand how currency fluctuations affect company valuations.
 """)
 
+# Initialize data source variable
+data_source = "Real-time data from Yahoo Finance"
+
 # Sidebar for inputs
 st.sidebar.header("Analysis Parameters")
 
@@ -287,17 +290,50 @@ with tab3:
                 unsafe_allow_html=True
             )
             
-            # Scatter plot
+            # Scatter plot with manual trend line instead of using OLS
             fig_scatter = px.scatter(
                 x=currency_pct_change[corr_currency_code],
                 y=stock_pct_change[company_code],
-                trendline="ols",
                 labels={
                     "x": f"{corr_currency} Daily % Change",
                     "y": f"{company} Daily % Change"
                 },
                 title=f"{company} vs {corr_currency} Correlation"
             )
+            
+            # Get x and y data for manual line calculation
+            x_data = currency_pct_change[corr_currency_code].dropna()
+            y_data = stock_pct_change[company_code].dropna()
+            
+            # Make sure we have matching indices
+            common_idx = x_data.index.intersection(y_data.index)
+            x_data = x_data.loc[common_idx]
+            y_data = y_data.loc[common_idx]
+            
+            if len(x_data) > 1:  # Need at least 2 points for a line
+                # Get coordinates for the trend line (simple approximation)
+                x_min, x_max = min(x_data), max(x_data)
+                
+                # Calculate slope using correlation and standard deviations
+                x_std = x_data.std()
+                y_std = y_data.std()
+                slope = correlation * (y_std / x_std) if x_std > 0 else 0
+                
+                # Calculate intercept (passes through the means)
+                x_mean = x_data.mean()
+                y_mean = y_data.mean()
+                intercept = y_mean - slope * x_mean
+                
+                # Add trend line
+                y_min = slope * x_min + intercept
+                y_max = slope * x_max + intercept
+                
+                fig_scatter.add_shape(
+                    type="line",
+                    x0=x_min, y0=y_min,
+                    x1=x_max, y1=y_max,
+                    line=dict(color="red", dash="dash")
+                )
             st.plotly_chart(fig_scatter, use_container_width=True)
     else:
         st.warning("Please select at least one currency and one company to perform correlation analysis.")

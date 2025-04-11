@@ -25,7 +25,9 @@ def get_exchange_rates(currency_pairs, start_date, end_date):
     
     for pair in currency_pairs:
         # Convert format from "USD-INR" to "USDINR=X" for Yahoo Finance
-        ticker = f"{pair.replace('-', '')}=X"
+        # Make sure pair is a string before calling replace on it
+        pair_str = str(pair)
+        ticker = f"{pair_str.replace('-', '')}=X"
         
         try:
             # Fetch data using yfinance
