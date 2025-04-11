@@ -27,6 +27,37 @@ This tool analyzes the impact of currency exchange rates on Indian IT companies'
 It helps investors and analysts understand how currency fluctuations affect company valuations.
 """)
 
+# Help box for new users
+with st.expander("📌 New User? Click here for help", expanded=True):
+    st.markdown("""
+    ### Welcome to the Currency Impact Analyzer!
+    
+    **What this app does:**
+    This tool helps you analyze how currency exchange rates (like USD/INR) affect the stock prices of Indian IT companies.
+    
+    **How to use this app:**
+    1. **Customize your analysis** using the sidebar on the left:
+       - Select your date range
+       - Choose which currencies you want to track
+       - Select which IT companies you're interested in
+       - Optionally set up alerts for significant currency movements
+       
+    2. **Explore the data** using the tabs above:
+       - **Exchange Rates**: View currency trends and daily changes
+       - **IT Stocks**: Monitor stock price performance
+       - **Correlation Analysis**: See how currency movements relate to stock prices
+       - **Alerts**: Track significant currency movements
+       
+    3. **Interpret the results**:
+       - Look for patterns between currency fluctuations and stock performance
+       - Strong negative correlations often indicate that when the rupee weakens, IT stocks tend to rise
+       - The correlation coefficient shows the strength of this relationship
+    
+    **Why this matters:**
+    Indian IT companies earn significant revenue in foreign currencies (mainly USD), so currency exchange rates can 
+    strongly impact their profitability and stock performance. This tool helps you visualize those relationships.
+    """)
+
 # Initialize data source variable
 data_source = "Real-time data from Yahoo Finance"
 
@@ -259,6 +290,19 @@ with tab3:
         
         correlation_matrix = corr_data.corr()
         
+        # Display correlation matrix with tooltip explanation
+        st.markdown("""
+        ℹ️ **Understanding Correlation Values**:
+        - **+1.00**: Perfect positive correlation (stocks rise when currency rises)
+        - **+0.70 to +0.99**: Strong positive correlation
+        - **+0.30 to +0.69**: Moderate positive correlation
+        - **0.00 to +0.29**: Weak or no correlation
+        - **-0.29 to 0.00**: Weak or no correlation
+        - **-0.69 to -0.30**: Moderate negative correlation
+        - **-0.99 to -0.70**: Strong negative correlation (stocks rise when currency falls)
+        - **-1.00**: Perfect negative correlation
+        """)
+        
         # Display correlation matrix
         fig_corr = px.imshow(
             correlation_matrix,
@@ -272,6 +316,13 @@ with tab3:
         
         # Detailed correlation analysis
         st.write("### Detailed Correlation Analysis")
+        
+        st.markdown("""
+        ℹ️ **What is P-value?** 
+        The P-value indicates the statistical significance of the correlation:
+        - **P-value < 0.05**: The correlation is statistically significant (reliable)
+        - **P-value ≥ 0.05**: The correlation might be due to random chance (less reliable)
+        """)
         
         for company in selected_companies:
             company_code = companies[company]
