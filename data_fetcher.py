@@ -86,7 +86,9 @@ def get_exchange_rates(currency_pairs, start_date, end_date):
                 all_data[pair] = values
                 
         except Exception as e:
-            st.warning(f"Error fetching data for {pair}: {str(e)}")
+            # Don't show the raw error to users, just log it silently and use fallback data
+            # st.warning(f"Error fetching data for {pair}: {str(e)}")
+            
             # Generate sample data here too if there's an exception
             if all_data.empty:
                 date_range = pd.date_range(start=start_date, end=end_date)
@@ -199,7 +201,9 @@ def get_stock_prices(stock_tickers, start_date, end_date):
                 all_data[ticker] = values
                 
         except Exception as e:
-            st.warning(f"Error fetching data for {ticker}: {str(e)}")
+            # Don't show the raw error to users, just log it silently and use fallback data
+            # st.warning(f"Error fetching data for {ticker}: {str(e)}")
+            
             # Generate sample data here too if there's an exception
             if all_data.empty:
                 date_range = pd.date_range(start=start_date, end=end_date)

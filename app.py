@@ -184,9 +184,14 @@ with st.spinner("Fetching stock price data..."):
 # Inform user about the data source being used
 if data_source == "Simulated data (live data unavailable)":
     st.info("""
-    ℹ️ Note: Some required data couldn't be retrieved from Yahoo Finance. 
-    The application is using simulated data to demonstrate functionality. 
-    The patterns and trends shown are for illustration purposes only.
+    ℹ️ **Using Simulated Data:** The application is currently using realistic simulated data.
+    
+    This could be due to:
+    - Connection issues with Yahoo Finance
+    - API request limitations
+    - Maintenance on the data provider side
+    
+    The patterns and trends shown are for demonstration purposes only.
     """)
 
 # Calculate percentage changes for analysis
