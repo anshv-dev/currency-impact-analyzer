@@ -89,6 +89,16 @@ if alert_active:
     )
     alert_email = st.sidebar.text_input("Email for alerts (optional)")
 
+# Sidebar message about data sources
+st.sidebar.markdown("""
+---
+**Note on Data Sources**
+
+The application attempts to fetch real-time data from Yahoo Finance. 
+If live data cannot be retrieved, the application will use generated sample data 
+based on realistic currency rates and stock prices to demonstrate functionality.
+""")
+
 # Load data based on selections
 with st.spinner("Fetching exchange rate data..."):
     try:
@@ -101,6 +111,14 @@ with st.spinner("Fetching exchange rate data..."):
         if currency_data is None or currency_data.empty:
             st.error("Failed to fetch currency data. Please check your selections and try again.")
             st.stop()
+        
+        # Check if we have at least some data for currencies
+        data_source = "Real-time data from Yahoo Finance"
+        for currency in selected_currencies:
+            currency_code = currencies[currency]
+            if currency_code not in currency_data.columns:
+                data_source = "Simulated data (live data unavailable)"
+                break
             
     except Exception as e:
         st.error(f"Error fetching currency data: {str(e)}")
@@ -117,10 +135,25 @@ with st.spinner("Fetching stock price data..."):
         if stock_data is None or stock_data.empty:
             st.error("Failed to fetch stock data. Please check your selections and try again.")
             st.stop()
+        
+        # Check if we have real data for stocks
+        for company in selected_companies:
+            company_code = companies[company]
+            if company_code not in stock_data.columns:
+                data_source = "Simulated data (live data unavailable)"
+                break
             
     except Exception as e:
         st.error(f"Error fetching stock data: {str(e)}")
         st.stop()
+
+# Inform user about the data source being used
+if data_source == "Simulated data (live data unavailable)":
+    st.info("""
+    ℹ️ Note: Some required data couldn't be retrieved from Yahoo Finance. 
+    The application is using simulated data to demonstrate functionality. 
+    The patterns and trends shown are for illustration purposes only.
+    """)
 
 # Calculate percentage changes for analysis
 with st.spinner("Calculating percentage changes..."):
@@ -317,5 +350,5 @@ with tab4:
 # Execution Info
 st.markdown("---")
 st.caption(f"Data time range: {start_date} to {end_date}")
-st.caption("Data source: Yahoo Finance")
+st.caption(f"Data source: {data_source}")
 st.caption(f"Last updated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
