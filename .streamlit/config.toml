@@ -1,5 +1,11 @@
+# Configuration for Streamlit deployment
+# For Streamlit Cloud, we'll use the default port (8501)
+# For Replit, we'll use port 5000
 [server]
 headless = true
+enableXsrfProtection = false
+
+# Uncomment these lines for local Replit deployment
 address = "0.0.0.0"
 port = 5000
 
